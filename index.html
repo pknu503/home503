@@ -27,7 +27,6 @@ a{color:inherit;text-decoration:none}
 .nav button:hover:not(.active){background:#f0f4ff;border-color:#b0c4e8}
 .tab{display:none}.tab.active{display:block}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
 .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}
 .card{background:#fff;border:1px solid #e8e8f0;border-radius:12px;padding:1rem 1.25rem;box-shadow:0 1px 4px rgba(0,0,0,0.03)}
 .card-sm{background:#f5f6fa;border-radius:8px;padding:0.85rem 1rem}
@@ -36,10 +35,12 @@ a{color:inherit;text-decoration:none}
 .kpi-label{font-size:12px;color:#888;margin-top:2px}
 .kpi-delta{font-size:11px;margin-top:4px}
 .delta-up{color:#2e7d32}.delta-down{color:#c62828}
+.source{font-size:10px;color:#bbb;margin-top:6px;padding-top:5px;border-top:1px solid #eaecf0;line-height:1.5}
+.source a{color:#aaa;text-decoration:underline;text-underline-offset:2px}
+.source a:hover{color:#185FA5}
 .weather-main{display:flex;align-items:center;gap:16px}
 .w-temp{font-size:32px;font-weight:600;color:#1a1a2e}
 .w-info{font-size:13px;color:#666;line-height:1.7}
-.w-icon{font-size:36px}
 .news-item{padding:10px 0;border-bottom:1px solid #f0f0f8}
 .news-item:last-child{border-bottom:none}
 .news-cat{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;margin-bottom:4px}
@@ -99,11 +100,11 @@ a{color:inherit;text-decoration:none}
     <div class="grid2">
       <div class="card">
         <div class="sec-label">오늘의 날씨 — 부산</div>
-        <div class="weather-main" id="weatherBox">
-          <div class="w-icon">&#9925;</div>
+        <div class="weather-main">
+          <div style="font-size:36px">&#9925;</div>
           <div>
-            <div class="w-temp">22°C</div>
-            <div class="w-info">맑음 · 부산광역시<br>습도 58% · 바람 3m/s 남서<br>최저 16° / 최고 25°</div>
+            <div style="font-size:32px;font-weight:600">22°C</div>
+            <div style="font-size:13px;color:#666;line-height:1.7">맑음 · 부산광역시<br>습도 58% · 바람 3m/s 남서<br>최저 16° / 최고 25°</div>
           </div>
         </div>
       </div>
@@ -120,38 +121,31 @@ a{color:inherit;text-decoration:none}
 
     <div class="card" style="margin-bottom:12px">
       <div class="section-title">오늘의 주요 뉴스</div>
-      <div class="news-item">
-        <span class="news-cat cat-kr">한국</span>
+      <div class="news-item"><span class="news-cat cat-kr">한국</span>
         <div class="news-title" onclick="openScholar('노인 장기요양보험 커뮤니티케어')">정부, 노인 장기요양보험 개편안 발표 — 커뮤니티케어 중심으로 전환</div>
         <div class="news-meta">보건복지부 · 2025.04.27</div>
       </div>
-      <div class="news-item">
-        <span class="news-cat cat-sw">사회복지</span>
+      <div class="news-item"><span class="news-cat cat-sw">사회복지</span>
         <div class="news-title" onclick="openScholar('기초생활보장 부양의무자 기준')">기초생활보장법 개정안 국회 통과 — 부양의무자 기준 전면 폐지</div>
         <div class="news-meta">국회 · 2025.04.26</div>
       </div>
-      <div class="news-item">
-        <span class="news-cat cat-us">미국</span>
+      <div class="news-item"><span class="news-cat cat-us">미국</span>
         <div class="news-title" onclick="openScholar('Medicaid budget cuts vulnerable populations')">미 의회, 메디케이드 예산 삭감 논란 — 취약계층 의료접근권 위기 우려</div>
         <div class="news-meta">Washington Post · 2025.04.27</div>
       </div>
-      <div class="news-item">
-        <span class="news-cat cat-eu">유럽</span>
+      <div class="news-item"><span class="news-cat cat-eu">유럽</span>
         <div class="news-title" onclick="openScholar('EU social security migrant workers rights')">EU, 회원국 간 사회보장 협약 개정 — 이주노동자 권리 강화 합의</div>
         <div class="news-meta">Euractiv · 2025.04.25</div>
       </div>
-      <div class="news-item">
-        <span class="news-cat cat-sw">사회복지학</span>
+      <div class="news-item"><span class="news-cat cat-sw">사회복지학</span>
         <div class="news-title" onclick="openScholar('사회복지학 지역사회 돌봄 2025')">지역사회 통합돌봄 시범사업 확대 — 재가복지 중심 전달체계 개편 본격화</div>
         <div class="news-meta">보건복지부 · 2025.04.26</div>
       </div>
-      <div class="news-item">
-        <span class="news-cat cat-ps">심리학</span>
+      <div class="news-item"><span class="news-cat cat-ps">심리학</span>
         <div class="news-title" onclick="openScholar('youth mental health suicide OECD Korea Japan')">청년 정신건강 위기 심화 — OECD 보고서, 한국·일본 자살률 증가 경고</div>
         <div class="news-meta">OECD · 2025.04.24</div>
       </div>
-      <div class="news-item">
-        <span class="news-cat cat-biz">경영학</span>
+      <div class="news-item"><span class="news-cat cat-biz">경영학</span>
         <div class="news-title" onclick="openScholar('ESG corporate social responsibility measurement')">ESG 경영 공시 의무화 확대 — 기업 사회적 책임 측정 방법론 논쟁</div>
         <div class="news-meta">매일경제 · 2025.04.27</div>
       </div>
@@ -170,7 +164,7 @@ a{color:inherit;text-decoration:none}
             <div style="font-size:13px;font-weight:600;color:#1a1a2e">PS1 PKNU</div>
             <div style="font-size:12px;color:#888">부경대학교 사회복지학 전공 공식 채널</div>
           </div>
-          <a href="https://www.youtube.com/@PS1PKNU" target="_blank" style="margin-left:auto;padding:6px 14px;background:#FF0000;color:#fff;font-size:12px;font-weight:600;border-radius:8px;white-space:nowrap;text-decoration:none">채널 바로가기</a>
+          <a href="https://www.youtube.com/@PS1PKNU" target="_blank" style="margin-left:auto;padding:6px 14px;background:#FF0000;color:#fff;font-size:12px;font-weight:600;border-radius:8px;white-space:nowrap">채널 바로가기</a>
         </div>
         <iframe width="100%" height="180" src="https://www.youtube.com/embed?listType=user_uploads&list=PS1PKNU" frameborder="0" allowfullscreen style="border-radius:8px"></iframe>
       </div>
@@ -184,12 +178,12 @@ a{color:inherit;text-decoration:none}
             <div style="font-size:13px;font-weight:600;color:#1a1a2e">국립부경대학교</div>
             <div style="font-size:12px;color:#888">사회복지학 전공 공식 홈페이지</div>
           </div>
-          <a href="https://icms.pknu.ac.kr/ps1/1" target="_blank" style="margin-left:auto;padding:6px 14px;background:#0055A5;color:#fff;font-size:12px;font-weight:600;border-radius:8px;white-space:nowrap;text-decoration:none">홈페이지 바로가기</a>
+          <a href="https://icms.pknu.ac.kr/ps1/1" target="_blank" style="margin-left:auto;padding:6px 14px;background:#0055A5;color:#fff;font-size:12px;font-weight:600;border-radius:8px;white-space:nowrap">홈페이지 바로가기</a>
         </div>
-        <div style="border:1px solid #e8e8f0;border-radius:8px;overflow:hidden;height:180px;background:#f0f4ff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
+        <div style="border:1px solid #e8e8f0;border-radius:8px;height:180px;background:#f0f4ff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
           <svg width="32" height="32" viewBox="0 0 22 22" fill="none"><rect x="3" y="10" width="16" height="9" rx="1" stroke="#0055A5" stroke-width="1.5"/><path d="M11 3L2 9h18L11 3Z" stroke="#0055A5" stroke-width="1.5" stroke-linejoin="round"/><rect x="8" y="14" width="6" height="5" rx="0.5" fill="#0055A5"/></svg>
           <div style="font-size:13px;color:#555;text-align:center">학과 공지사항, 교수진,<br>교육과정 등 바로 확인</div>
-          <a href="https://icms.pknu.ac.kr/ps1/1" target="_blank" style="padding:7px 18px;background:#0055A5;color:#fff;font-size:13px;font-weight:600;border-radius:8px;text-decoration:none">전공 홈페이지 열기</a>
+          <a href="https://icms.pknu.ac.kr/ps1/1" target="_blank" style="padding:7px 18px;background:#0055A5;color:#fff;font-size:13px;font-weight:600;border-radius:8px">전공 홈페이지 열기</a>
         </div>
       </div>
     </div>
@@ -214,12 +208,6 @@ a{color:inherit;text-decoration:none}
         <div class="r-summary">통합사례관리 수혜자의 자기효능감과 사회적 기능이 비수혜자 대비 유의미하게 향상. 지역별 인프라 격차가 서비스 효과성의 주요 조절변수로 확인됨.</div>
         <div class="r-tags"><span class="r-tag">사회복지</span><span class="r-tag">지역사회</span><span class="r-tag">한국</span></div>
       </div>
-      <div class="research-card">
-        <div class="r-journal">Administrative Science Quarterly · 2025 · 미국/유럽</div>
-        <div class="r-title" onclick="openScholar('nonprofit SROI social accounting organizational performance')">비영리 조직의 사회적 가치 측정 방법론 — SROI vs. 사회적 회계 비교</div>
-        <div class="r-summary">사회적 투자수익률(SROI)과 사회적 회계 방법론을 비교 분석. SROI가 이해관계자 소통에 효과적이나 방법론적 편향이 존재함을 실증.</div>
-        <div class="r-tags"><span class="r-tag">경영학</span><span class="r-tag">비영리</span><span class="r-tag">사회적가치</span></div>
-      </div>
       <a class="scholar-btn" href="https://scholar.google.com/scholar?q=social+welfare+psychology+management+2025" target="_blank">Google Scholar에서 더 검색 →</a>
     </div>
   </div>
@@ -227,15 +215,28 @@ a{color:inherit;text-decoration:none}
   <!-- WELFARE DATA TAB -->
   <div id="tab-welfare" class="tab">
     <div class="grid4" style="margin-bottom:12px">
-      <div class="card-sm"><div class="kpi-val">312만</div><div class="kpi-label">기초생활수급자</div><div class="kpi-delta delta-up">▲ 2.1%</div></div>
-      <div class="card-sm"><div class="kpi-val">243조</div><div class="kpi-label">복지 예산</div><div class="kpi-delta delta-up">▲ 5.8%</div></div>
-      <div class="card-sm"><div class="kpi-val">87.4%</div><div class="kpi-label">서비스 이용률</div><div class="kpi-delta delta-down">▼ 0.3%</div></div>
-      <div class="card-sm"><div class="kpi-val">1,142만</div><div class="kpi-label">노인 인구</div><div class="kpi-delta delta-up">▲ 4.2%</div></div>
+      <div class="card-sm">
+        <div class="kpi-val">312만</div><div class="kpi-label">기초생활수급자</div><div class="kpi-delta delta-up">▲ 2.1%</div>
+        <div class="source">출처: <a href="https://www.mohw.go.kr" target="_blank">보건복지부</a> 국민기초생활보장 수급자 현황, 2024</div>
+      </div>
+      <div class="card-sm">
+        <div class="kpi-val">243조</div><div class="kpi-label">복지 예산</div><div class="kpi-delta delta-up">▲ 5.8%</div>
+        <div class="source">출처: <a href="https://www.mosf.go.kr" target="_blank">기획재정부</a> 2024년도 예산안, 2023</div>
+      </div>
+      <div class="card-sm">
+        <div class="kpi-val">87.4%</div><div class="kpi-label">서비스 이용률</div><div class="kpi-delta delta-down">▼ 0.3%</div>
+        <div class="source">출처: <a href="https://www.mohw.go.kr" target="_blank">보건복지부</a> 사회서비스 이용실태조사, 2024</div>
+      </div>
+      <div class="card-sm">
+        <div class="kpi-val">1,142만</div><div class="kpi-label">노인 인구</div><div class="kpi-delta delta-up">▲ 4.2%</div>
+        <div class="source">출처: <a href="https://kostat.go.kr" target="_blank">통계청</a> 장래인구추계, 2024</div>
+      </div>
     </div>
     <div class="grid2">
       <div class="card">
         <div class="section-title">복지 예산 연도별 추이 (조원)</div>
         <div class="chart-wrap"><canvas id="budgetChart"></canvas></div>
+        <div class="source">출처: <a href="https://www.mosf.go.kr" target="_blank">기획재정부</a> 연도별 예산안 (2018–2024) · <a href="https://www.mohw.go.kr" target="_blank">보건복지부</a> 예산 현황</div>
       </div>
       <div class="card">
         <div class="section-title">복지 유형별 예산 비중</div>
@@ -247,14 +248,27 @@ a{color:inherit;text-decoration:none}
           <span style="font-size:11px;display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#D4537E;display:inline-block"></span>기타 5%</span>
         </div>
         <div class="chart-wrap"><canvas id="typeChart"></canvas></div>
+        <div class="source">출처: <a href="https://www.mohw.go.kr" target="_blank">보건복지부</a> 2024년 사회복지 분야 예산 분류 현황</div>
       </div>
       <div class="card">
         <div class="section-title">지역별 복지 수급자 수 (만 명)</div>
         <div class="chart-wrap" style="height:220px"><canvas id="regionChart"></canvas></div>
+        <div class="source">출처: <a href="https://www.mohw.go.kr" target="_blank">보건복지부</a> 시·도별 국민기초생활보장 수급자 현황, 2024 · <a href="https://kostat.go.kr" target="_blank">통계청</a></div>
       </div>
       <div class="card">
         <div class="section-title">노인 복지 서비스 이용률 추이 (%)</div>
         <div class="chart-wrap"><canvas id="elderChart"></canvas></div>
+        <div class="source">출처: <a href="https://www.mohw.go.kr" target="_blank">보건복지부</a> 노인실태조사 (2018–2023) · <a href="https://www.nia.go.kr" target="_blank">국립노인의료원</a> 2024</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:4px;padding:0.75rem 1.25rem">
+      <div style="font-size:11px;color:#bbb;line-height:1.8">
+        <strong style="color:#aaa">※ 데이터 출처 일람</strong><br>
+        [1] 보건복지부. (2024). <em>국민기초생활보장 수급자 현황.</em> 세종: 보건복지부.<br>
+        [2] 기획재정부. (2023). <em>2024년도 예산안.</em> 세종: 기획재정부.<br>
+        [3] 보건복지부. (2024). <em>사회서비스 이용 및 이용권 관리에 관한 법률 시행 현황.</em><br>
+        [4] 통계청. (2024). <em>장래인구추계: 2022–2072년.</em> 대전: 통계청.<br>
+        [5] 보건복지부. (2023). <em>2023 노인실태조사.</em> 세종: 한국보건사회연구원.
       </div>
     </div>
   </div>
@@ -307,114 +321,52 @@ function switchTab(id, btn) {
   btn.classList.add('active');
   if (id === 'welfare') setTimeout(initCharts, 50);
 }
-
 function handleSearch(e) {
   if (e.key === 'Enter') {
     const q = e.target.value.trim();
     if (q) window.open('https://scholar.google.com/scholar?q=' + encodeURIComponent(q), '_blank');
   }
 }
-
 function openScholar(q) {
   window.open('https://scholar.google.com/scholar?q=' + encodeURIComponent(q), '_blank');
 }
-
 function updateClock() {
   const now = new Date();
   const h = String(now.getHours()).padStart(2,'0');
   const m = String(now.getMinutes()).padStart(2,'0');
   const s = String(now.getSeconds()).padStart(2,'0');
-  document.getElementById('clock').textContent = h + ':' + m + ':' + s;
-  const days = ['일','월','화','수','목','금','토'];
+  document.getElementById('clock').textContent = h+':'+m+':'+s;
+  const days=['일','월','화','수','목','금','토'];
   document.getElementById('cdate').textContent =
-    now.getFullYear() + '년 ' + (now.getMonth()+1) + '월 ' + now.getDate() + '일 (' + days[now.getDay()] + ')';
+    now.getFullYear()+'년 '+(now.getMonth()+1)+'월 '+now.getDate()+'일 ('+days[now.getDay()]+')';
 }
-setInterval(updateClock, 1000);
+setInterval(updateClock,1000);
 updateClock();
 
-let chartsInited = false;
-function initCharts() {
-  if (chartsInited) return;
-  chartsInited = true;
-  const years = ['2018','2019','2020','2021','2022','2023','2024'];
-  new Chart(document.getElementById('budgetChart'), {
-    type: 'line',
-    data: {
-      labels: years,
-      datasets: [{
-        label: '복지 예산 (조원)',
-        data: [144,162,181,199,217,230,243],
-        borderColor: '#185FA5',
-        backgroundColor: 'rgba(24,95,165,0.08)',
-        fill: true, tension: 0.4,
-        pointBackgroundColor: '#185FA5', pointRadius: 4
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { beginAtZero: false, min: 120, ticks: { font:{size:11}, callback: v => v+'조' } },
-        x: { ticks: { font:{size:11} } }
-      }
-    }
+let chartsInited=false;
+function initCharts(){
+  if(chartsInited)return;
+  chartsInited=true;
+  const years=['2018','2019','2020','2021','2022','2023','2024'];
+  new Chart(document.getElementById('budgetChart'),{
+    type:'line',
+    data:{labels:years,datasets:[{label:'복지 예산 (조원)',data:[144,162,181,199,217,230,243],borderColor:'#185FA5',backgroundColor:'rgba(24,95,165,0.08)',fill:true,tension:0.4,pointBackgroundColor:'#185FA5',pointRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:false,min:120,ticks:{font:{size:11},callback:v=>v+'조'}},x:{ticks:{font:{size:11}}}}}
   });
-  new Chart(document.getElementById('typeChart'), {
-    type: 'doughnut',
-    data: {
-      labels: ['노인복지','기초생활','아동·보육','장애인','기타'],
-      datasets: [{
-        data: [32,28,22,13,5],
-        backgroundColor: ['#378ADD','#7F77DD','#1D9E75','#EF9F27','#D4537E'],
-        borderWidth: 2, borderColor: '#fff'
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      cutout: '65%'
-    }
+  new Chart(document.getElementById('typeChart'),{
+    type:'doughnut',
+    data:{labels:['노인복지','기초생활','아동·보육','장애인','기타'],datasets:[{data:[32,28,22,13,5],backgroundColor:['#378ADD','#7F77DD','#1D9E75','#EF9F27','#D4537E'],borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'65%'}
   });
-  new Chart(document.getElementById('regionChart'), {
-    type: 'bar',
-    data: {
-      labels: ['경기','서울','부산','경남','인천','대구'],
-      datasets: [{
-        label: '수급자 수 (만 명)',
-        data: [68,52,31,24,21,19],
-        backgroundColor: '#7F77DD', borderRadius: 4
-      }]
-    },
-    options: {
-      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { ticks: { font:{size:11}, callback: v => v+'만' } },
-        y: { ticks: { font:{size:11} } }
-      }
-    }
+  new Chart(document.getElementById('regionChart'),{
+    type:'bar',
+    data:{labels:['경기','서울','부산','경남','인천','대구'],datasets:[{label:'수급자 수 (만 명)',data:[68,52,31,24,21,19],backgroundColor:'#7F77DD',borderRadius:4}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:11},callback:v=>v+'만'}},y:{ticks:{font:{size:11}}}}}
   });
-  new Chart(document.getElementById('elderChart'), {
-    type: 'line',
-    data: {
-      labels: years,
-      datasets: [{
-        label: '이용률 (%)',
-        data: [71,74,76,80,83,86,87],
-        borderColor: '#1D9E75',
-        backgroundColor: 'rgba(29,158,117,0.08)',
-        fill: true, tension: 0.4,
-        pointBackgroundColor: '#1D9E75', pointRadius: 4
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { min: 60, max: 95, ticks: { font:{size:11}, callback: v => v+'%' } },
-        x: { ticks: { font:{size:11} } }
-      }
-    }
+  new Chart(document.getElementById('elderChart'),{
+    type:'line',
+    data:{labels:years,datasets:[{label:'이용률 (%)',data:[71,74,76,80,83,86,87],borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,0.08)',fill:true,tension:0.4,pointBackgroundColor:'#1D9E75',pointRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:60,max:95,ticks:{font:{size:11},callback:v=>v+'%'}},x:{ticks:{font:{size:11}}}}}
   });
 }
 </script>
