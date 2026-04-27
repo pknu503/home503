@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SW Research Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Noto Sans KR',sans-serif;background:#f5f6fa;color:#1a1a2e}
+a{color:inherit;text-decoration:none}
+.dash{padding:1rem;max-width:960px;margin:0 auto}
+.topbar{display:flex;align-items:center;gap:12px;margin-bottom:1rem;background:#fff;border:1px solid #e8e8f0;border-radius:12px;padding:0.75rem 1rem;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.logo{font-size:15px;font-weight:600;color:#1a1a2e;white-space:nowrap}
+.logo span{color:#185FA5}
+.search-wrap{flex:1;position:relative}
+.search-wrap input{width:100%;padding:7px 12px 7px 34px;border:1px solid #e0e0ee;border-radius:8px;font-size:13px;background:#f8f8fc;color:#1a1a2e;outline:none;transition:border .15s}
+.search-wrap input:focus{border-color:#185FA5;background:#fff}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#aaa;font-size:14px}
+.search-hint{font-size:11px;color:#aaa;margin-top:3px;padding-left:2px}
+.clock-box{text-align:right;white-space:nowrap}
+.clock-time{font-size:18px;font-weight:600;color:#1a1a2e;letter-spacing:1px}
+.clock-date{font-size:11px;color:#888}
+.nav{display:flex;gap:6px;margin-bottom:1rem}
+.nav button{padding:6px 16px;font-size:13px;border-radius:8px;border:1px solid #e0e0ee;background:#fff;color:#666;cursor:pointer;transition:all .15s;font-weight:500}
+.nav button.active{background:#185FA5;color:#fff;border-color:#185FA5}
+.nav button:hover:not(.active){background:#f0f4ff;border-color:#b0c4e8}
+.tab{display:none}.tab.active{display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}
+.card{background:#fff;border:1px solid #e8e8f0;border-radius:12px;padding:1rem 1.25rem;box-shadow:0 1px 4px rgba(0,0,0,0.03)}
+.card-sm{background:#f5f6fa;border-radius:8px;padding:0.85rem 1rem}
+.sec-label{font-size:11px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.kpi-val{font-size:22px;font-weight:600;color:#1a1a2e}
+.kpi-label{font-size:12px;color:#888;margin-top:2px}
+.kpi-delta{font-size:11px;margin-top:4px}
+.delta-up{color:#2e7d32}.delta-down{color:#c62828}
+.weather-main{display:flex;align-items:center;gap:16px}
+.w-temp{font-size:32px;font-weight:600;color:#1a1a2e}
+.w-info{font-size:13px;color:#666;line-height:1.7}
+.w-icon{font-size:36px}
+.news-item{padding:10px 0;border-bottom:1px solid #f0f0f8}
+.news-item:last-child{border-bottom:none}
+.news-cat{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;margin-bottom:4px}
+.cat-kr{background:#E6F1FB;color:#0C447C}
+.cat-us{background:#EAF3DE;color:#27500A}
+.cat-eu{background:#FAEEDA;color:#633806}
+.cat-sw{background:#EEEDFE;color:#3C3489}
+.cat-ps{background:#FBEAF0;color:#72243E}
+.cat-biz{background:#E1F5EE;color:#085041}
+.news-title{font-size:13px;font-weight:500;color:#1a1a2e;line-height:1.5;margin-bottom:2px;cursor:pointer;transition:color .15s}
+.news-title:hover{color:#185FA5}
+.news-meta{font-size:11px;color:#bbb}
+.research-card{padding:12px 0;border-bottom:1px solid #f0f0f8}
+.research-card:last-child{border-bottom:none}
+.r-journal{font-size:10px;color:#bbb;margin-bottom:3px}
+.r-title{font-size:13px;font-weight:500;color:#1a1a2e;margin-bottom:4px;cursor:pointer;transition:color .15s}
+.r-title:hover{color:#185FA5}
+.r-summary{font-size:12px;color:#666;line-height:1.6}
+.r-tags{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.r-tag{font-size:10px;padding:2px 8px;border-radius:20px;background:#f5f6fa;color:#888}
+.chart-wrap{position:relative;height:200px;margin-top:8px}
+.section-title{font-size:14px;font-weight:600;color:#1a1a2e;margin-bottom:10px}
+.scholar-btn{display:inline-block;margin-top:12px;padding:6px 14px;font-size:12px;border:1px solid #e0e0ee;border-radius:8px;background:#f8f8fc;color:#555;cursor:pointer;transition:all .15s;text-decoration:none}
+.scholar-btn:hover{background:#185FA5;color:#fff;border-color:#185FA5}
+.ai-btn{display:inline-block;margin-top:10px;padding:5px 12px;font-size:12px;border:1px solid #e0e0ee;border-radius:8px;background:#fff;color:#666;cursor:pointer;transition:all .15s}
+.ai-btn:hover{background:#f0f4ff}
+@media(max-width:600px){
+  .grid2,.grid4{grid-template-columns:1fr}
+  .topbar{flex-wrap:wrap}
+  .clock-box{width:100%;text-align:left}
+}
+</style>
+</head>
+<body>
+<div class="dash">
+  <div class="topbar">
+    <div class="logo">SW<span>Research</span></div>
+    <div class="search-wrap">
+      <span class="search-icon">&#9906;</span>
+      <input type="text" placeholder="Google Scholar 논문 검색 (Enter)..." id="searchInput" onkeydown="handleSearch(event)">
+      <div class="search-hint">Enter 키를 누르면 Google Scholar에서 검색됩니다</div>
+    </div>
+    <div class="clock-box">
+      <div class="clock-time" id="clock">--:--:--</div>
+      <div class="clock-date" id="cdate"></div>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="active" onclick="switchTab('home',this)">홈</button>
+    <button onclick="switchTab('welfare',this)">복지 데이터</button>
+    <button onclick="switchTab('research',this)">연구 동향</button>
+  </div>
+
+  <!-- HOME TAB -->
+  <div id="tab-home" class="tab active">
+    <div class="grid2">
+      <div class="card">
+        <div class="sec-label">오늘의 날씨 — 부산</div>
+        <div class="weather-main" id="weatherBox">
+          <div class="w-icon">&#9925;</div>
+          <div>
+            <div class="w-temp">22°C</div>
+            <div class="w-info">맑음 · 부산광역시<br>습도 58% · 바람 3m/s 남서<br>최저 16° / 최고 25°</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sec-label">복지 핵심 지표 요약</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="card-sm"><div class="kpi-val">312만</div><div class="kpi-label">기초생활수급자</div><div class="kpi-delta delta-up">▲ 2.1%</div></div>
+          <div class="card-sm"><div class="kpi-val">243조</div><div class="kpi-label">복지 예산 (2024)</div><div class="kpi-delta delta-up">▲ 5.8%</div></div>
+          <div class="card-sm"><div class="kpi-val">87.4%</div><div class="kpi-label">서비스 이용률</div><div class="kpi-delta delta-down">▼ 0.3%</div></div>
+          <div class="card-sm"><div class="kpi-val">1,142만</div><div class="kpi-label">노인 인구</div><div class="kpi-delta delta-up">▲ 4.2%</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <div class="section-title">오늘의 주요 뉴스</div>
+      <div class="news-item">
+        <span class="news-cat cat-kr">한국</span>
+        <div class="news-title" onclick="openScholar('노인 장기요양보험 커뮤니티케어')">정부, 노인 장기요양보험 개편안 발표 — 커뮤니티케어 중심으로 전환</div>
+        <div class="news-meta">보건복지부 · 2025.04.27</div>
+      </div>
+      <div class="news-item">
+        <span class="news-cat cat-sw">사회복지</span>
+        <div class="news-title" onclick="openScholar('기초생활보장 부양의무자 기준')">기초생활보장법 개정안 국회 통과 — 부양의무자 기준 전면 폐지</div>
+        <div class="news-meta">국회 · 2025.04.26</div>
+      </div>
+      <div class="news-item">
+        <span class="news-cat cat-us">미국</span>
+        <div class="news-title" onclick="openScholar('Medicaid budget cuts vulnerable populations')">미 의회, 메디케이드 예산 삭감 논란 — 취약계층 의료접근권 위기 우려</div>
+        <div class="news-meta">Washington Post · 2025.04.27</div>
+      </div>
+      <div class="news-item">
+        <span class="news-cat cat-eu">유럽</span>
+        <div class="news-title" onclick="openScholar('EU social security migrant workers rights')">EU, 회원국 간 사회보장 협약 개정 — 이주노동자 권리 강화 합의</div>
+        <div class="news-meta">Euractiv · 2025.04.25</div>
+      </div>
+      <div class="news-item">
+        <span class="news-cat cat-ps">심리학</span>
+        <div class="news-title" onclick="openScholar('youth mental health suicide OECD Korea Japan')">청년 정신건강 위기 심화 — OECD 보고서, 한국·일본 자살률 증가 경고</div>
+        <div class="news-meta">OECD · 2025.04.24</div>
+      </div>
+      <div class="news-item">
+        <span class="news-cat cat-biz">경영학</span>
+        <div class="news-title" onclick="openScholar('ESG corporate social responsibility measurement')">ESG 경영 공시 의무화 확대 — 기업 사회적 책임 측정 방법론 논쟁</div>
+        <div class="news-meta">매일경제 · 2025.04.27</div>
+      </div>
+      <a class="scholar-btn" href="https://scholar.google.com/scholar?q=사회복지+복지정책" target="_blank">Google Scholar에서 더 검색 →</a>
+    </div>
+
+    <div class="card">
+      <div class="section-title">화제의 연구 결과</div>
+      <div class="research-card">
+        <div class="r-journal">Journal of Social Policy · 2025 · 영국</div>
+        <div class="r-title" onclick="openScholar('Universal Basic Income UBI Finland Canada Kenya longitudinal')">보편적 기본소득(UBI) 실험 비교 연구 — 핀란드·캐나다·케냐 3개국 종단 분석</div>
+        <div class="r-summary">UBI 지급이 수혜자의 정신건강, 노동 참여율, 사회적 신뢰에 미치는 영향을 비교 분석. 핀란드 집단에서 웰빙 지수가 유의미하게 증가하였으나 노동시장 효과는 국가별로 상이함.</div>
+        <div class="r-tags"><span class="r-tag">사회복지</span><span class="r-tag">UBI</span><span class="r-tag">유럽</span></div>
+      </div>
+      <div class="research-card">
+        <div class="r-journal">American Psychological Association · 2025 · 미국</div>
+        <div class="r-title" onclick="openScholar('digital social isolation elderly depression cohort')">디지털 사회적 고립이 노인 우울증에 미치는 영향 — 미국 65세 이상 12,000명 코호트</div>
+        <div class="r-summary">SNS 사용과 대면 접촉 감소가 복합적으로 작용해 노인 우울 위험을 1.7배 높임. 사회적 개입 프로그램의 비용 효과성이 약물치료 대비 3.2배 높다는 결과.</div>
+        <div class="r-tags"><span class="r-tag">심리학</span><span class="r-tag">노인건강</span><span class="r-tag">미국</span></div>
+      </div>
+      <div class="research-card">
+        <div class="r-journal">한국사회복지학 · 2025 · 한국</div>
+        <div class="r-title" onclick="openScholar('지역사회복지관 통합사례관리 효과성')">지역사회복지관 통합사례관리 효과성 연구 — 서울·부산·대구 비교</div>
+        <div class="r-summary">통합사례관리 수혜자의 자기효능감과 사회적 기능이 비수혜자 대비 유의미하게 향상. 지역별 인프라 격차가 서비스 효과성의 주요 조절변수로 확인됨.</div>
+        <div class="r-tags"><span class="r-tag">사회복지</span><span class="r-tag">지역사회</span><span class="r-tag">한국</span></div>
+      </div>
+      <div class="research-card">
+        <div class="r-journal">Administrative Science Quarterly · 2025 · 미국/유럽</div>
+        <div class="r-title" onclick="openScholar('nonprofit SROI social accounting organizational performance')">비영리 조직의 사회적 가치 측정 방법론 — SROI vs. 사회적 회계 비교</div>
+        <div class="r-summary">사회적 투자수익률(SROI)과 사회적 회계 방법론을 비교 분석. SROI가 이해관계자 소통에 효과적이나 방법론적 편향이 존재함을 실증.</div>
+        <div class="r-tags"><span class="r-tag">경영학</span><span class="r-tag">비영리</span><span class="r-tag">사회적가치</span></div>
+      </div>
+      <a class="scholar-btn" href="https://scholar.google.com/scholar?q=social+welfare+psychology+management+2025" target="_blank">Google Scholar에서 더 검색 →</a>
+    </div>
+  </div>
+
+  <!-- WELFARE DATA TAB -->
+  <div id="tab-welfare" class="tab">
+    <div class="grid4" style="margin-bottom:12px">
+      <div class="card-sm"><div class="kpi-val">312만</div><div class="kpi-label">기초생활수급자</div><div class="kpi-delta delta-up">▲ 2.1%</div></div>
+      <div class="card-sm"><div class="kpi-val">243조</div><div class="kpi-label">복지 예산</div><div class="kpi-delta delta-up">▲ 5.8%</div></div>
+      <div class="card-sm"><div class="kpi-val">87.4%</div><div class="kpi-label">서비스 이용률</div><div class="kpi-delta delta-down">▼ 0.3%</div></div>
+      <div class="card-sm"><div class="kpi-val">1,142만</div><div class="kpi-label">노인 인구</div><div class="kpi-delta delta-up">▲ 4.2%</div></div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="section-title">복지 예산 연도별 추이 (조원)</div>
+        <div class="chart-wrap"><canvas id="budgetChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="section-title">복지 유형별 예산 비중</div>
+        <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+          <span style="font-size:11px;display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#378ADD;display:inline-block"></span>노인복지 32%</span>
+          <span style="font-size:11px;display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#7F77DD;display:inline-block"></span>기초생활 28%</span>
+          <span style="font-size:11px;display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#1D9E75;display:inline-block"></span>아동·보육 22%</span>
+          <span style="font-size:11px;display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#EF9F27;display:inline-block"></span>장애인 13%</span>
+          <span style="font-size:11px;display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#D4537E;display:inline-block"></span>기타 5%</span>
+        </div>
+        <div class="chart-wrap"><canvas id="typeChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="section-title">지역별 복지 수급자 수 (만 명)</div>
+        <div class="chart-wrap" style="height:220px"><canvas id="regionChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="section-title">노인 복지 서비스 이용률 추이 (%)</div>
+        <div class="chart-wrap"><canvas id="elderChart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESEARCH TAB -->
+  <div id="tab-research" class="tab">
+    <div class="card">
+      <div class="section-title">분야별 Google Scholar 바로 검색</div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+        <a class="scholar-btn" href="https://scholar.google.com/scholar?q=사회복지+2025" target="_blank">사회복지학</a>
+        <a class="scholar-btn" href="https://scholar.google.com/scholar?q=심리학+정신건강+2025" target="_blank">심리학</a>
+        <a class="scholar-btn" href="https://scholar.google.com/scholar?q=organizational+behavior+management+2025" target="_blank">경영학</a>
+        <a class="scholar-btn" href="https://scholar.google.com/scholar?q=social+behavioral+science+meta+analysis+2025" target="_blank">사회행동과학</a>
+        <a class="scholar-btn" href="https://scholar.google.com/scholar?q=AI+social+welfare+2025" target="_blank">AI × 복지</a>
+        <a class="scholar-btn" href="https://scholar.google.com/scholar?q=노인건강+지역사회+2025" target="_blank">노인건강</a>
+      </div>
+      <div class="research-card">
+        <div class="r-journal">Social Science & Medicine · 2025 · 유럽</div>
+        <div class="r-title" onclick="openScholar('social determinants health inequality Europe meta-analysis')">건강 불평등의 사회결정요인 메타분석 — 유럽 23개국 비교</div>
+        <div class="r-summary">소득·교육·주거 안정성이 건강 결과에 미치는 상대적 영향력을 메타분석으로 비교. 주거 불안정이 기존 연구 대비 과소평가되어 왔음을 실증.</div>
+        <div class="r-tags"><span class="r-tag">사회복지</span><span class="r-tag">건강불평등</span><span class="r-tag">유럽</span></div>
+      </div>
+      <div class="research-card">
+        <div class="r-journal">Journal of Organizational Behavior · 2025 · 미국</div>
+        <div class="r-title" onclick="openScholar('psychological safety organizational innovation nonprofit')">직장 내 심리적 안전감이 조직 혁신에 미치는 영향 — 비영리 vs 영리 비교</div>
+        <div class="r-summary">비영리 조직에서 심리적 안전감과 혁신 행동 간 관계가 영리 조직보다 강하게 나타남. 리더십 스타일이 이 관계를 조절하는 핵심 변수임을 확인.</div>
+        <div class="r-tags"><span class="r-tag">경영학</span><span class="r-tag">조직행동</span><span class="r-tag">미국</span></div>
+      </div>
+      <div class="research-card">
+        <div class="r-journal">한국심리학회지 · 2025 · 한국</div>
+        <div class="r-title" onclick="openScholar('노인 우울증 사회적 지지 도시 농촌')">노인 우울증 예방에서 사회적 지지 네트워크의 조절효과 — 도시·농촌 비교</div>
+        <div class="r-summary">도시 노인과 농촌 노인 간 사회적 지지 구조가 상이하며, 농촌에서 공식적 지지보다 비공식 지지의 우울 완충 효과가 더 크게 나타남.</div>
+        <div class="r-tags"><span class="r-tag">심리학</span><span class="r-tag">노인건강</span><span class="r-tag">한국</span></div>
+      </div>
+      <div class="research-card">
+        <div class="r-journal">Behaviour Research and Therapy · 2025 · 유럽/미국</div>
+        <div class="r-title" onclick="openScholar('digital CBT cognitive behavioral therapy anxiety depression RCT')">디지털 인지행동치료(dCBT) 효과성 무작위 대조 연구 — 불안·우울 12주 추적</div>
+        <div class="r-summary">앱 기반 dCBT가 대면 CBT와 유사한 효과를 보이며 비용은 67% 절감. 단, 중증 이상 사례에서는 대면 개입의 효과가 유의미하게 높음.</div>
+        <div class="r-tags"><span class="r-tag">심리학</span><span class="r-tag">디지털치료</span><span class="r-tag">RCT</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'welfare') setTimeout(initCharts, 50);
+}
+
+function handleSearch(e) {
+  if (e.key === 'Enter') {
+    const q = e.target.value.trim();
+    if (q) window.open('https://scholar.google.com/scholar?q=' + encodeURIComponent(q), '_blank');
+  }
+}
+
+function openScholar(q) {
+  window.open('https://scholar.google.com/scholar?q=' + encodeURIComponent(q), '_blank');
+}
+
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const s = String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('clock').textContent = h + ':' + m + ':' + s;
+  const days = ['일','월','화','수','목','금','토'];
+  document.getElementById('cdate').textContent =
+    now.getFullYear() + '년 ' + (now.getMonth()+1) + '월 ' + now.getDate() + '일 (' + days[now.getDay()] + ')';
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+let chartsInited = false;
+function initCharts() {
+  if (chartsInited) return;
+  chartsInited = true;
+  const years = ['2018','2019','2020','2021','2022','2023','2024'];
+  new Chart(document.getElementById('budgetChart'), {
+    type: 'line',
+    data: {
+      labels: years,
+      datasets: [{
+        label: '복지 예산 (조원)',
+        data: [144,162,181,199,217,230,243],
+        borderColor: '#185FA5',
+        backgroundColor: 'rgba(24,95,165,0.08)',
+        fill: true, tension: 0.4,
+        pointBackgroundColor: '#185FA5', pointRadius: 4
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: false, min: 120, ticks: { font:{size:11}, callback: v => v+'조' } },
+        x: { ticks: { font:{size:11} } }
+      }
+    }
+  });
+  new Chart(document.getElementById('typeChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['노인복지','기초생활','아동·보육','장애인','기타'],
+      datasets: [{
+        data: [32,28,22,13,5],
+        backgroundColor: ['#378ADD','#7F77DD','#1D9E75','#EF9F27','#D4537E'],
+        borderWidth: 2, borderColor: '#fff'
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      cutout: '65%'
+    }
+  });
+  new Chart(document.getElementById('regionChart'), {
+    type: 'bar',
+    data: {
+      labels: ['경기','서울','부산','경남','인천','대구'],
+      datasets: [{
+        label: '수급자 수 (만 명)',
+        data: [68,52,31,24,21,19],
+        backgroundColor: '#7F77DD', borderRadius: 4
+      }]
+    },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { font:{size:11}, callback: v => v+'만' } },
+        y: { ticks: { font:{size:11} } }
+      }
+    }
+  });
+  new Chart(document.getElementById('elderChart'), {
+    type: 'line',
+    data: {
+      labels: years,
+      datasets: [{
+        label: '이용률 (%)',
+        data: [71,74,76,80,83,86,87],
+        borderColor: '#1D9E75',
+        backgroundColor: 'rgba(29,158,117,0.08)',
+        fill: true, tension: 0.4,
+        pointBackgroundColor: '#1D9E75', pointRadius: 4
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { min: 60, max: 95, ticks: { font:{size:11}, callback: v => v+'%' } },
+        x: { ticks: { font:{size:11} } }
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>
