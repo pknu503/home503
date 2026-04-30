@@ -368,12 +368,17 @@ async function fetchWeather(city) {
   const today = new Date();
   const yesterday = new Date(today); yesterday.setDate(today.getDate()-1);
   const fmt = d => d.toISOString().split('T')[0];
-  const forecastDays = 11;
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max&current_weather=true&past_days=1&forecast_days=${forecastDays}&timezone=Asia%2FSeoul`;
-  const res = await fetch(url);
-  const data = await res.json();
-  wxCache[city] = data;
-  return data;
+
+  // 오늘 + 10일 예보
+  const forecastUrl = `https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max&current_weather=true&forecast_days=11&timezone=Asia%2FSeoul`;
+  // 어제 날씨 (historical)
+  const histUrl = `https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&start_date=${fmt(yesterday)}&end_date=${fmt(yesterday)}&timezone=Asia%2FSeoul`;
+
+  const [fRes, hRes] = await Promise.all([fetch(forecastUrl), fetch(histUrl)]);
+  const [fData, hData] = await Promise.all([fRes.json(), hRes.json()]);
+
+  wxCache[city] = { forecast: fData, history: hData, yesterday: fmt(yesterday) };
+  return wxCache[city];
 }
 
 function showCity(city) {
@@ -395,25 +400,29 @@ async function renderWeather(city) {
   el.innerHTML = '<div style="text-align:center;padding:20px;color:#aaa">날씨 불러오는 중...</div>';
   try {
     const data = await fetchWeather(city);
-    const cw = data.current_weather;
-    const daily = data.daily;
+    const cw = data.forecast.current_weather;
+    const daily = data.forecast.daily;
+    const hist = data.history.daily;
     const days = ['일','월','화','수','목','금','토'];
     const today = new Date();
+    const yesterday = new Date(today); yesterday.setDate(today.getDate()-1);
 
-    // 날짜 인덱스: past_days=1이므로 index 0 = 어제, 1 = 오늘, 2~11 = 내일~10일후
-    const yIdx = 0, tIdx = 1;
     const icon = code => WX_ICONS[code] || '🌡️';
     const desc = code => WX_DESC[code] || '';
 
     // 어제
-    const yDate = new Date(today); yDate.setDate(today.getDate()-1);
+    const yDate = yesterday;
     const yLabel = `${yDate.getMonth()+1}/${yDate.getDate()} (${days[yDate.getDay()]})`;
+    const yCode = hist.weathercode[0];
+    const yMax = Math.round(hist.temperature_2m_max[0]);
+    const yMin = Math.round(hist.temperature_2m_min[0]);
+    const yPop = hist.precipitation_probability_max[0];
 
-    // 10일 예보 (오늘 포함)
+    // 10일 예보
     let forecastHTML = '';
-    for (let i = tIdx; i <= tIdx+10 && i < daily.time.length; i++) {
+    for (let i = 0; i < daily.time.length && i <= 10; i++) {
       const d = new Date(daily.time[i]);
-      const isToday = i === tIdx;
+      const isToday = i === 0;
       const label = isToday ? '오늘' : `${d.getMonth()+1}/${d.getDate()}<br><span style="font-size:9px">(${days[d.getDay()]})</span>`;
       forecastHTML += `
         <div style="flex:1;min-width:52px;text-align:center;padding:8px 4px;border-radius:8px;background:${isToday?'#e8f0fb':'#f8f8fc'};border:1px solid ${isToday?'#b0c4e8':'#eee'}">
@@ -427,26 +436,26 @@ async function renderWeather(city) {
 
     el.innerHTML = `
       <!-- 현재 날씨 -->
-      <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;padding:14px;background:#f0f4ff;border-radius:10px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px;padding:14px;background:#f0f4ff;border-radius:10px;flex-wrap:wrap">
         <div style="font-size:48px">${icon(cw.weathercode)}</div>
         <div>
           <div style="font-size:32px;font-weight:700;color:#1a1a2e">${Math.round(cw.temperature)}°C</div>
           <div style="font-size:13px;color:#555">${desc(cw.weathercode)} · ${CITIES[city].name}</div>
-          <div style="font-size:12px;color:#888;margin-top:3px">바람 ${cw.windspeed}km/h · 최고 ${Math.round(daily.temperature_2m_max[tIdx])}° / 최저 ${Math.round(daily.temperature_2m_min[tIdx])}°</div>
+          <div style="font-size:12px;color:#888;margin-top:3px">바람 ${cw.windspeed}km/h · 최고 ${Math.round(daily.temperature_2m_max[0])}° / 최저 ${Math.round(daily.temperature_2m_min[0])}°</div>
         </div>
         <div style="margin-left:auto;font-size:11px;color:#aaa">Open-Meteo 실시간</div>
       </div>
       <!-- 어제 날씨 -->
-      <div style="margin-bottom:12px;padding:10px 14px;background:#fafafa;border-radius:8px;border:1px solid #eee;display:flex;align-items:center;gap:12px">
-        <span style="font-size:11px;font-weight:600;color:#888;white-space:nowrap">어제 ${yLabel}</span>
-        <span style="font-size:18px">${icon(daily.weathercode[yIdx])}</span>
-        <span style="font-size:13px;color:#1a1a2e">${desc(daily.weathercode[yIdx])}</span>
-        <span style="font-size:12px;color:#c62828;margin-left:auto">최고 ${Math.round(daily.temperature_2m_max[yIdx])}°</span>
-        <span style="font-size:12px;color:#185FA5">최저 ${Math.round(daily.temperature_2m_min[yIdx])}°</span>
-        <span style="font-size:11px;color:#aaa">💧${daily.precipitation_probability_max[yIdx]}%</span>
+      <div style="margin-bottom:12px;padding:10px 14px;background:#fafafa;border-radius:8px;border:1px solid #eee;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <span style="font-size:11px;font-weight:600;color:#888;white-space:nowrap">🕐 어제 ${yLabel}</span>
+        <span style="font-size:20px">${icon(yCode)}</span>
+        <span style="font-size:13px;color:#1a1a2e">${desc(yCode)}</span>
+        <span style="font-size:12px;color:#c62828;margin-left:auto">최고 ${yMax}°</span>
+        <span style="font-size:12px;color:#185FA5">최저 ${yMin}°</span>
+        <span style="font-size:11px;color:#aaa">💧${yPop !== null && yPop !== undefined ? yPop : '-'}%</span>
       </div>
       <!-- 10일 예보 -->
-      <div style="font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:8px">10일 예보</div>
+      <div style="font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:8px">📅 10일 예보</div>
       <div style="display:flex;gap:5px;overflow-x:auto;padding-bottom:4px">${forecastHTML}</div>
       <div style="font-size:10px;color:#ccc;margin-top:8px;text-align:right">데이터: Open-Meteo.com (매일 자동 업데이트)</div>`;
   } catch(e) {
