@@ -418,8 +418,20 @@ async function renderWeather(city) {
     const yMin = Math.round(hist.temperature_2m_min[0]);
     const yPop = hist.precipitation_probability_max[0];
 
-    // 10일 예보
+    // 10일 예보 (어제 + 오늘 + 10일)
     let forecastHTML = '';
+
+    // 어제 먼저
+    forecastHTML += `
+      <div style="flex:1;min-width:52px;text-align:center;padding:8px 4px;border-radius:8px;background:#f5f5f5;border:1px solid #ddd;opacity:0.8">
+        <div style="font-size:10px;color:#aaa;margin-bottom:3px">어제<br><span style="font-size:9px">${yLabel.replace(' (','<br>').replace(')','')}</span></div>
+        <div style="font-size:18px">${icon(yCode)}</div>
+        <div style="font-size:11px;font-weight:600;color:#c62828">${yMax}°</div>
+        <div style="font-size:11px;color:#185FA5">${yMin}°</div>
+        <div style="font-size:9px;color:#aaa;margin-top:2px">💧${yPop !== null && yPop !== undefined ? yPop : '-'}%</div>
+      </div>`;
+
+    // 오늘 + 10일
     for (let i = 0; i < daily.time.length && i <= 10; i++) {
       const d = new Date(daily.time[i]);
       const isToday = i === 0;
@@ -445,17 +457,8 @@ async function renderWeather(city) {
         </div>
         <div style="margin-left:auto;font-size:11px;color:#aaa">Open-Meteo 실시간</div>
       </div>
-      <!-- 어제 날씨 -->
-      <div style="margin-bottom:12px;padding:10px 14px;background:#fafafa;border-radius:8px;border:1px solid #eee;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-        <span style="font-size:11px;font-weight:600;color:#888;white-space:nowrap">🕐 어제 ${yLabel}</span>
-        <span style="font-size:20px">${icon(yCode)}</span>
-        <span style="font-size:13px;color:#1a1a2e">${desc(yCode)}</span>
-        <span style="font-size:12px;color:#c62828;margin-left:auto">최고 ${yMax}°</span>
-        <span style="font-size:12px;color:#185FA5">최저 ${yMin}°</span>
-        <span style="font-size:11px;color:#aaa">💧${yPop !== null && yPop !== undefined ? yPop : '-'}%</span>
-      </div>
-      <!-- 10일 예보 -->
-      <div style="font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:8px">📅 10일 예보</div>
+      <!-- 예보 (어제+오늘+10일) -->
+      <div style="font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:8px">📅 어제 · 오늘 · 10일 예보</div>
       <div style="display:flex;gap:5px;overflow-x:auto;padding-bottom:4px">${forecastHTML}</div>
       <div style="font-size:10px;color:#ccc;margin-top:8px;text-align:right">데이터: Open-Meteo.com (매일 자동 업데이트)</div>`;
   } catch(e) {
