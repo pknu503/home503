@@ -457,10 +457,70 @@ async function renderWeather(city) {
         </div>
         <div style="margin-left:auto;font-size:11px;color:#aaa">Open-Meteo 실시간</div>
       </div>
+      <!-- 기온 그래프 -->
+      <div style="margin-bottom:12px;padding:12px;background:#fff;border-radius:10px;border:1px solid #eee">
+        <div style="font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:8px">🌡️ 기온 변화 그래프 (어제 ~ 10일)</div>
+        <canvas id="tempChart" style="width:100%;height:140px"></canvas>
+      </div>
       <!-- 예보 (어제+오늘+10일) -->
       <div style="font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:8px">📅 어제 · 오늘 · 10일 예보</div>
       <div style="display:flex;gap:5px;overflow-x:auto;padding-bottom:4px">${forecastHTML}</div>
       <div style="font-size:10px;color:#ccc;margin-top:8px;text-align:right">데이터: Open-Meteo.com (매일 자동 업데이트)</div>`;
+
+    // 기온 그래프
+    const labels = [yLabel.split(' ')[0], ...daily.time.slice(0,11).map((t,i)=>{
+      const d = new Date(t);
+      return i===0 ? '오늘' : `${d.getMonth()+1}/${d.getDate()}`;
+    })];
+    const maxTemps = [yMax, ...daily.temperature_2m_max.slice(0,11).map(v=>Math.round(v))];
+    const minTemps = [yMin, ...daily.temperature_2m_min.slice(0,11).map(v=>Math.round(v))];
+
+    // 기존 차트 제거 후 새로 생성
+    if(window._tempChartInst) window._tempChartInst.destroy();
+    const ctx = document.getElementById('tempChart');
+    if(ctx) {
+      window._tempChartInst = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: '최고기온',
+              data: maxTemps,
+              borderColor: '#e53935',
+              backgroundColor: 'rgba(229,57,53,0.08)',
+              fill: false,
+              tension: 0.4,
+              pointBackgroundColor: labels.map((_,i)=>i===0?'#aaa':'#e53935'),
+              pointRadius: 5,
+              borderDash: labels.map((_,i)=>i===0?[4,3]:[]),
+            },
+            {
+              label: '최저기온',
+              data: minTemps,
+              borderColor: '#1976d2',
+              backgroundColor: 'rgba(25,118,210,0.08)',
+              fill: false,
+              tension: 0.4,
+              pointBackgroundColor: labels.map((_,i)=>i===0?'#aaa':'#1976d2'),
+              pointRadius: 5,
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: true, labels: { font:{size:11}, boxWidth:12 } },
+            tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}°C` } }
+          },
+          scales: {
+            y: { ticks: { font:{size:11}, callback: v => v+'°' } },
+            x: { ticks: { font:{size:10} } }
+          }
+        }
+      });
+    }
   } catch(e) {
     el.innerHTML = '<div style="text-align:center;padding:20px;color:#aaa">날씨 정보를 불러올 수 없습니다.<br>잠시 후 다시 시도해 주세요.</div>';
   }
