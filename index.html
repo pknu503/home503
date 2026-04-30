@@ -460,7 +460,9 @@ async function renderWeather(city) {
       <!-- 기온 그래프 -->
       <div style="margin-bottom:12px;padding:12px;background:#fff;border-radius:10px;border:1px solid #eee">
         <div style="font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:8px">🌡️ 기온 변화 그래프 (어제 ~ 10일)</div>
-        <canvas id="tempChart" style="width:100%;height:140px"></canvas>
+        <div style="position:relative;height:150px">
+          <canvas id="tempChart"></canvas>
+        </div>
       </div>
       <!-- 예보 (어제+오늘+10일) -->
       <div style="font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:8px">📅 어제 · 오늘 · 10일 예보</div>
@@ -491,9 +493,8 @@ async function renderWeather(city) {
               backgroundColor: 'rgba(229,57,53,0.08)',
               fill: false,
               tension: 0.4,
-              pointBackgroundColor: labels.map((_,i)=>i===0?'#aaa':'#e53935'),
-              pointRadius: 5,
-              borderDash: labels.map((_,i)=>i===0?[4,3]:[]),
+              pointBackgroundColor: maxTemps.map((_,i)=>i===0?'#bbb':'#e53935'),
+              pointRadius: 4,
             },
             {
               label: '최저기온',
@@ -502,8 +503,8 @@ async function renderWeather(city) {
               backgroundColor: 'rgba(25,118,210,0.08)',
               fill: false,
               tension: 0.4,
-              pointBackgroundColor: labels.map((_,i)=>i===0?'#aaa':'#1976d2'),
-              pointRadius: 5,
+              pointBackgroundColor: minTemps.map((_,i)=>i===0?'#bbb':'#1976d2'),
+              pointRadius: 4,
             }
           ]
         },
@@ -511,12 +512,12 @@ async function renderWeather(city) {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { display: true, labels: { font:{size:11}, boxWidth:12 } },
-            tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}°C` } }
+            legend: { display: true, labels: { font:{size:11}, boxWidth:10 } },
+            tooltip: { callbacks: { label: c => `${c.dataset.label}: ${c.raw}°C` } }
           },
           scales: {
-            y: { ticks: { font:{size:11}, callback: v => v+'°' } },
-            x: { ticks: { font:{size:10} } }
+            y: { ticks: { font:{size:10}, callback: v => v+'°' } },
+            x: { ticks: { font:{size:9}, maxRotation:0 } }
           }
         }
       });
